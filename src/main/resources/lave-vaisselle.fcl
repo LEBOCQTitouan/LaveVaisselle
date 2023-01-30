@@ -1,0 +1,92 @@
+FUNCTION_BLOCK laveVaiselle	// Définition du bloc (1 bloc par fichier)
+
+VAR_INPUT				// Variables en entrée
+	charge : REAL;
+	niveauDeSalete : REAL;
+	dureteEau : REAL;
+END_VAR
+
+VAR_OUTPUT				// Variable en sortie
+	dureeLavage : REAL;
+END_VAR
+
+FUZZIFY charge			// Variable en entrée "fuzzifiée"
+	TERM petite := (0,1) (30,1) (40,0);
+	TERM moyenne := (30,0) (40,1) (60,1) (70,0);
+	TERM grande := (60,0) (70,1) (100,1);
+END_FUZZIFY
+
+FUZZIFY niveauDeSalete			// Variable en entrée "fuzzifiée"
+	TERM propre := (0, 1) (33, 0);
+	TERM legerementSale := (0,0) (33,1) (66,0);
+	TERM saleeee := (33,0) (66,1)(99,0);
+	TERM tresSale := (66,0) (100,1);
+END_FUZZIFY
+
+FUZZIFY dureteEau			// Variable en entrée "fuzzifiée"
+	TERM tresDouce := (0,1)(5.6,0);
+	TERM douce := (0,0) (5.6,1) (11.2,1) (19.6,0);
+	TERM moyennementDure := (5.6,0)(11.2,1) (19.6,1) (30.8,0);
+	TERM dure := (11.2,0) (19.6,1) (30.8,1) (35,0);
+	TERM tresDure := (30.8,0) (36,1);
+END_FUZZIFY
+
+
+DEFUZZIFY dureeLavage			// Variable en sortie "défuzzifiée"
+	TERM courte := (0,1) (30,1) (80,0);
+	TERM moyenne := (0,0) (60,1) (90,1) (140,0);
+	TERM longue := (60,0) (120,1) (140,1) (180,0);
+	TERM tresLongue := (120,0) (160,1) (180,1);
+	METHOD : COG;		// Utilise le centre de gravité pour la défuzzification
+	DEFAULT := 0;		// Valeur par défaut (aucune règle ne lance la défuzzification)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Utilise 'min' pour le 'ET' ('max' pour 'OU')
+	ACT : MIN;			// Utilise 'min' comme méthode d'activation
+	ACCU : MAX;			// Utilise 'max' comme méthode d'accumulation
+
+	RULE 1 : IF dureteEau IS tresDouce AND charge IS petite AND niveauDeSalete IS propre THEN dureeLavage IS courte;
+	RULE 2 : IF dureteEau IS douce AND charge IS petite AND niveauDeSalete IS propre THEN dureeLavage IS courte;
+	RULE 3 : IF dureteEau IS moyennementDure AND charge IS petite AND niveauDeSalete IS propre THEN dureeLavage IS courte;
+    RULE 4 : IF dureteEau IS dure AND charge IS petite AND niveauDeSalete IS propre THEN dureeLavage IS moyenne;
+    RULE 5 : IF dureteEau IS tresDure AND charge IS petite AND niveauDeSalete IS propre THEN dureeLavage IS moyenne;
+    RULE 6 : IF dureteEau IS tresDouce AND charge IS petite AND niveauDeSalete IS legerementSale THEN dureeLavage IS courte;
+    RULE 7 : IF dureteEau IS douce AND charge IS petite AND niveauDeSalete IS legerementSale THEN dureeLavage IS courte;
+    RULE 8 : IF dureteEau IS moyennementDure AND charge IS petite AND niveauDeSalete IS legerementSale THEN dureeLavage IS moyenne;
+    RULE 9 : IF dureteEau IS dure AND charge IS petite AND niveauDeSalete IS legerementSale THEN dureeLavage IS moyenne;
+    RULE 10 : IF dureteEau IS tresDure AND charge IS petite AND niveauDeSalete IS legerementSale THEN dureeLavage IS longue;
+    RULE 11 : IF dureteEau IS tresDouce AND charge IS petite AND niveauDeSalete IS sale THEN dureeLavage IS courte;
+    RULE 12 : IF dureteEau IS douce AND charge IS petite AND niveauDeSalete IS sale THEN dureeLavage IS moyenne;
+    RULE 13 : IF dureteEau IS moyennementDure AND charge IS petite AND niveauDeSalete IS sale THEN dureeLavage IS moyenne;
+    RULE 14 : IF dureteEau IS dure AND charge IS petite AND niveauDeSalete IS sale THEN dureeLavage IS longue;
+    RULE 15 : IF dureteEau IS tresDure AND charge IS petite AND niveauDeSalete IS sale THEN dureeLavage IS longue;
+    RULE 16 : IF dureteEau IS tresDouce AND charge IS petite AND niveauDeSalete IS tresSale THEN dureeLavage IS moyenne;
+    RULE 17 : IF dureteEau IS douce AND charge IS petite AND niveauDeSalete IS tresSale THEN dureeLavage IS moyenne;
+    RULE 18 : IF dureteEau IS moyennementDure AND charge IS petite AND niveauDeSalete IS tresSale THEN dureeLavage IS longue;
+    RULE 19 : IF dureteEau IS dure AND charge IS petite AND niveauDeSalete IS tresSale THEN dureeLavage IS longue;
+    RULE 20 : IF dureteEau IS tresDure AND charge IS petite AND niveauDeSalete IS tresSale THEN dureeLavage IS tresLongue;
+    RULE 21 : IF dureteEau IS tresDouce AND charge IS moyenne AND niveauDeSalete IS propre THEN dureeLavage IS courte;
+    RULE 22 : IF dureteEau IS douce AND charge IS moyenne AND niveauDeSalete IS propre THEN dureeLavage IS courte;
+    RULE 23 : IF dureteEau IS moyennementDure AND charge IS moyenne AND niveauDeSalete IS propre THEN dureeLavage IS moyenne;
+    RULE 24 : IF dureteEau IS dure AND charge IS moyenne AND niveauDeSalete IS propre THEN dureeLavage IS moyenne;
+    RULE 25 : IF dureteEau IS tresDure AND charge IS moyenne AND niveauDeSalete IS propre THEN dureeLavage IS longue;
+    RULE 26 : IF dureteEau IS tresDouce AND charge IS moyenne AND niveauDeSalete IS legerementSale THEN dureeLavage IS courte;
+    RULE 27 : IF dureteEau IS douce AND charge IS moyenne AND niveauDeSalete IS legerementSale THEN dureeLavage IS moyenne;
+    RULE 28 : IF dureteEau IS moyennementDure AND charge IS moyenne AND niveauDeSalete IS legerementSale THEN dureeLavage IS moyenne;
+    RULE 29 : IF dureteEau IS dure AND charge IS moyenne AND niveauDeSalete IS legerementSale THEN dureeLavage IS longue;
+    RULE 30 : IF dureteEau IS tresDure AND charge IS moyenne AND niveauDeSalete IS legerementSale THEN dureeLavage IS longue;
+    RULE 31 : IF dureteEau IS tresDouce AND charge IS moyenne AND niveauDeSalete IS sale THEN dureeLavage IS moyenne;
+    RULE 32 : IF dureteEau IS douce AND charge IS moyenne AND niveauDeSalete IS sale THEN dureeLavage IS moyenne;
+    RULE 33 : IF dureteEau IS moyennementDure AND charge IS moyenne AND niveauDeSalete IS sale THEN dureeLavage IS longue;
+    RULE 34 : IF dureteEau IS dure AND charge IS moyenne AND niveauDeSalete IS sale THEN dureeLavage IS longue;
+    RULE 35 : IF dureteEau IS tresDure AND charge IS moyenne AND niveauDeSalete IS sale THEN dureeLavage IS tresLongue;
+    RULE 36 : IF dureteEau IS tresDouce AND charge IS moyenne AND niveauDeSalete IS tresSale THEN dureeLavage IS moyenne;
+    RULE 37 : IF dureteEau IS douce AND charge IS moyenne AND niveauDeSalete IS tresSale THEN dureeLavage IS longue;
+    RULE 38 : IF dureteEau IS moyennementDure AND charge IS moyenne AND niveauDeSalete IS tresSale THEN dureeLavage IS longue;
+    RULE 39 : IF dureteEau IS dure AND charge IS moyenne AND niveauDeSalete IS tresSale THEN dureeLavage IS tresLongue;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+
