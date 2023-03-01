@@ -7,14 +7,14 @@ import javafx.stage.Stage;
 
 public class LaveVaisselleApplication extends Application {
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Lave-vaiselle \"flou\"");
         primaryStage.setScene(new Scene(new Controller().getStageGrid(), 800, 150));
         primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

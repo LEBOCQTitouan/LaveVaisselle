@@ -5,7 +5,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.layout.GridPane;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
-import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import net.sourceforge.jFuzzyLogic.rule.Variable;
 
 public class Controller {
@@ -25,7 +24,7 @@ public class Controller {
     }
 
     private FunctionBlock loadFisFile() {
-        String filename = "lave-vaisselle.fcl";
+        String filename = getClass().getResource("/lave-vaisselle.fcl").toString();
         FIS fis = FIS.load(filename, true);
 
         if (fis == null) {
